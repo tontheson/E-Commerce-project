@@ -19,18 +19,189 @@
 - Access to Google BigQuery
 - Basic to intermediate SQL knowledge
 ## V. Explore Data set
-#Query 01: Calculate total visit, pageview, transaction for Jan, Feb and March 2017 (order by month)
-- SQL query
-<pre> ```SELECT
-  SUBSTR(date, 1, 6) AS month,
-  SUM(IFNULL(totals.visits,0)) AS visits, --- dùng ifnull để tránh sai lỗi khi tính tổng trường dữ liệu có thể chứa NULL
-  SUM(IFNULL(totals.pageviews,0)) AS pageviews,
-  SUM(IFNULL(totals.transactions,0)) AS transactions
+### Query 01: Calculate total visit, pageview, transaction for Jan, Feb and March 2017 (order by month)
+- SQL query:
+<pre>SELECT
+  format_date("%Y%m", parse_date("%Y%m%d", date)) as month,
+  SUM(totals.visits) AS visits,
+  SUM(totals.pageviews) AS pageviews,
+  SUM(totals.transactions) AS transactions,
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331'
+GROUP BY 1
+ORDER BY 1;</pre>
+- Result:
+<pre>| month   | visits | pageviews | transactions |
+|---------|--------|-----------|--------------|
+| 201701  | 64694  | 257708    | 713          |
+| 201702  | 62192  | 233373    | 733          |
+| 201703  | 69931  | 259522    | 993          |</pre>
+### Query 02: Bounce rate per traffic source in July 2017 (Bounce_rate = num_bounce/total_visit) (order by total_visit DESC)
+- SQL query:
+<pre>SELECT
+    trafficSource.source as source,
+    sum(totals.visits) as total_visits,
+    sum(totals.Bounces) as total_no_of_bounces,
+    (sum(totals.Bounces)/sum(totals.visits))* 100.00 as bounce_rate
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
+GROUP BY source
+ORDER BY total_visits DESC;</pre>
+- Result (Top 10):
+<pre>| source                   | total_visits | total_no_of_bou | bounce_rate   |
+|--------------------------|--------------|------------------|--------------|
+| google                   | 38400        | 19798            | 51,55729167  |
+| (direct)                 | 19891        | 8606             | 43,2657986   |
+| youtube.com              | 6351         | 4238             | 66,72964887  |
+| analytics.google.com     | 1972         | 1064             | 53,95537525  |
+| Partners                 | 1788         | 936              | 52,34899329  |
+| m.facebook.com           | 669          | 430              | 64,27503737  |
+| google.com               | 368          | 183              | 49,72826087  |
+| dfa                      | 302          | 124              | 41,05960265  |
+| sites.google.com         | 230          | 97               | 42,17391304  |
+| facebook.com             | 191          | 102              | 53,40314136  |
+</pre>
+### Query 03: Revenue by traffic source by week, by month in June 2017
+- SQL query:
+<pre>with 
+month_data as(
+  SELECT
+    "Month" as time_type,
+    format_date("%Y%m", parse_date("%Y%m%d", date)) as month,
+    trafficSource.source AS source,
+    SUM(p.productRevenue)/1000000 AS revenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
+    unnest(hits) hits,
+    unnest(product) p
+  WHERE p.productRevenue is not null
+  GROUP BY 1,2,3
+  order by revenue DESC
+),
 
-FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
-WHERE _table_suffix between '20170101' AND '20170331'
-GROUP BY month
-ORDER BY month;``` </pre>
+week_data as(
+  SELECT
+    "Week" as time_type,
+    format_date("%Y%W", parse_date("%Y%m%d", date)) as week,
+    trafficSource.source AS source,
+    SUM(p.productRevenue)/1000000 AS revenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
+    unnest(hits) hits,
+    unnest(product) p
+  WHERE p.productRevenue is not null
+  GROUP BY 1,2,3
+  order by revenue DESC
+)
+
+select * from month_data
+union all
+select * from week_data
+order by time_type;</pre>
+- Result (top 30):
+<pre>| time_type   |   month | source            |   revenue |
+|:------------|--------:|:------------------|----------:|
+| Month       |  201706 | mail.google.com   |   2563.13 |
+| Month       |  201706 | mail.aol.com      |     64.85 |
+| Month       |  201706 | sites.google.com  |     39.17 |
+| Month       |  201706 | l.facebook.com    |     12.48 |
+| Month       |  201706 | chat.google.com   |     74.03 |
+| Month       |  201706 | bing              |     13.98 |
+| Month       |  201706 | (direct)          |  97333.6  |
+| Month       |  201706 | dealspotr.com     |     72.95 |
+| Month       |  201706 | groups.google.com |    101.96 |
+| Month       |  201706 | phandroid.com     |     52.95 |
+| Month       |  201706 | google.com        |     23.99 |
+| Month       |  201706 | search.myway.com  |    105.94 |
+| Month       |  201706 | dfa               |   8862.23 |
+| Month       |  201706 | google            |  18757.2  |
+| Month       |  201706 | yahoo             |     20.39 |
+| Month       |  201706 | youtube.com       |     16.99 |
+| Week        |  201724 | mail.google.com   |   2486.86 |
+| Week        |  201725 | mail.google.com   |     76.27 |
+| Week        |  201724 | dealspotr.com     |     72.95 |
+| Week        |  201726 | (direct)          |  14914.8  |
+| Week        |  201725 | (direct)          |  27295.3  |
+| Week        |  201722 | (direct)          |   6888.9  |
+| Week        |  201725 | sites.google.com  |     25.19 |
+| Week        |  201725 | groups.google.com |     38.59 |
+| Week        |  201726 | dfa               |   3704.74 |
+| Week        |  201723 | youtube.com       |     16.99 |
+| Week        |  201726 | yahoo             |     20.39 |
+| Week        |  201723 | chat.google.com   |     74.03 |
+</pre>
+### Query 04: Average number of pageviews by purchaser type (purchasers vs non-purchasers) in June, July 2017
+- SQL query
+<pre>
+with 
+purchaser_data as(
+  select
+      format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+      (sum(totals.pageviews)/count(distinct fullvisitorid)) as avg_pageviews_purchase,
+  from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+    ,unnest(hits) hits
+    ,unnest(product) product
+  where _table_suffix between '0601' and '0731'
+  and totals.transactions>=1
+  and product.productRevenue is not null
+  group by month
+),
+
+non_purchaser_data as(
+  select
+      format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+      sum(totals.pageviews)/count(distinct fullvisitorid) as avg_pageviews_non_purchase,
+  from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+      ,unnest(hits) hits
+    ,unnest(product) product
+  where _table_suffix between '0601' and '0731'
+  and totals.transactions is null
+  and product.productRevenue is null
+  group by month
+)
+
+select
+    pd.*,
+    avg_pageviews_non_purchase
+from purchaser_data pd
+full join non_purchaser_data using(month)
+order by pd.month;
+</pre>
+- Result:
+<pre>
+| month  | avg_pageviews_per_user  | avg_pageviews_per_session  |
+|--------|-------------------------|----------------------------|
+| 201706 | 94.020501               | 316.865589                 |
+| 201707 | 124.237552              | 334.056560                 |
+</pre>
+### Query 05: Average number of transactions per user that made a purchase in July 2017
+- SQL query
+<pre>
+select
+    format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+    sum(totals.transactions)/count(distinct fullvisitorid) as Avg_total_transactions_per_user
+from `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
+    ,unnest (hits) hits,
+    unnest(product) product
+where  totals.transactions>=1
+and product.productRevenue is not null
+group by month;
+</pre>
+- Result:
+<pre>
+| month  | Avg_total_transactions_per_user |
+|--------|---------------------------------|
+| 201707 | 4.16390041493776                |
+</pre>
+### Query 06: Average amount of money spent per session. Only include purchaser data in July 2017
+<pre>
+select
+    format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+    ((sum(product.productRevenue)/sum(totals.visits))/power(10,6)) as avg_revenue_by_user_per_visit
+from `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
+  ,unnest(hits) hits
+  ,unnest(product) product
+where product.productRevenue is not null
+  and totals.transactions>=1
+group by month;
+</pre>
 ## Contributing
   Contributions are welcome! Please open an issue first to discuss potential improvements or submit a pull request.
 ## Contact
