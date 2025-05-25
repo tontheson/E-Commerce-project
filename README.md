@@ -15,10 +15,10 @@
 - Identify high-performing marketing channels and referral sources.
 - Understand user session behavior, including bounce rates and session duration.
 - Evaluate ecommerce performance metrics like transactions, revenue, and conversion rates.
-## Requirements
+## V. Requirements
 - Access to Google BigQuery
 - Basic to intermediate SQL knowledge
-## V. Explore Data set
+## VI. Explore Data set
 ### Query 01: Calculate total visit, pageview, transaction for Jan, Feb and March 2017 (order by month)
 - SQL query:
 <pre>SELECT
@@ -300,9 +300,9 @@ from product_data;
 | 201702 | 21489            | 7360             | 2060          | 34.25            | 9.59           |
 | 201703 | 23549            | 8782             | 2977          | 37.29            | 12.64          |
 </pre>
-## Contributing
+## VII. Contributing
   Contributions are welcome! Please open an issue first to discuss potential improvements or submit a pull request.
-## Contact
+## VIII. Contact
 For any questions or suggestions, please contact:
 - Ton The Son
 - Email: tontheson@gmail.com
