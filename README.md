@@ -21,7 +21,16 @@
 ## V. Explore Data set
 #Query 01: Calculate total visit, pageview, transaction for Jan, Feb and March 2017 (order by month)
 - SQL query
-<pre> ```sql WITH get_1month_cohort AS ( SELECT CASE WHEN 1 = 1 THEN "201701" END AS month, COUNT(CASE WHEN hits.eCommerceAction.action_type = "2" AND product.isImpression IS NULL THEN fullVisitorId END) AS num_product_view, COUNT(CASE WHEN hits.eCommerceAction.action_type = "3" AND product.isImpression IS NULL THEN fullVisitorId END) AS num_addtocart, COUNT(CASE WHEN hits.eCommerceAction.action_type = "6" AND product.isImpression IS NULL THEN fullVisitorId END) AS num_purchase FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201701*`, UNNEST(hits) AS hits, UNNEST(hits.product) AS product ) ``` </pre>
+<pre> ```SELECT
+  SUBSTR(date, 1, 6) AS month,
+  SUM(IFNULL(totals.visits,0)) AS visits, --- dùng ifnull để tránh sai lỗi khi tính tổng trường dữ liệu có thể chứa NULL
+  SUM(IFNULL(totals.pageviews,0)) AS pageviews,
+  SUM(IFNULL(totals.transactions,0)) AS transactions
+
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+WHERE _table_suffix between '20170101' AND '20170331'
+GROUP BY month
+ORDER BY month;``` </pre>
 ## Contributing
   Contributions are welcome! Please open an issue first to discuss potential improvements or submit a pull request.
 ## Contact
