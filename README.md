@@ -21,7 +21,8 @@
 ## VI. Explore Data set
 ### Query 01: Calculate total visit, pageview, transaction for Jan, Feb and March 2017 (order by month)
 - SQL query:
-<pre>SELECT
+<pre>
+SELECT
   format_date("%Y%m", parse_date("%Y%m%d", date)) as month,
   SUM(totals.visits) AS visits,
   SUM(totals.pageviews) AS pageviews,
