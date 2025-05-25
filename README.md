@@ -1,13 +1,10 @@
 # [SQL] Explore Ecommerce Dataset
 ## I. Project Overview
-  This repository contains SQL queries and analysis based on the Ecommerce dataset available on Google BigQuery. The project aims to extract meaningful insights and trends from transactional and customer behavior data to support strategic decision-making in Ecommerce operations.
+  This repository contains SQL queries and analysis based on the Google Analytics Ecommerce dataset available on Google BigQuery. The project aims to provide insights into user behavior, website traffic, and transaction data to support decision-making in digital marketing and ecommerce strategies.
 ## II. Dataset Description
-  The dataset used in this project is sourced from Google's public datasets on BigQuery, specifically focusing on Ecommerce data, which includes:
-- Transactions: Details about customer purchases.
-- Customers: Information about customer demographics and behavior.
-- Products: Product details and categories.
-- Web Analytics: Customer interactions and sessions data.
-You can explore the dataset directly on Google BigQuery's Public Datasets.
+  The dataset used in this project is the Google Analytics sample dataset on BigQuery:
+- ga_sessions: Detailed session-level data from August 1, 2017, including user interactions, traffic sources, geographic data, and ecommerce transactions.
+You can explore the dataset directly on [Google BigQuery's Public Datasets](https://console.cloud.google.com/bigquery?ws=!1m5!1m4!4m3!1sbigquery-public-data!2sgoogle_analytics_sample!3sga_sessions_20170801).
 ## III. Data access
 ## IV. Exploring dataset
 ## Requirements
