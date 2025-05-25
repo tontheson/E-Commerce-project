@@ -4,9 +4,12 @@
 ## II. Dataset Description
   The dataset used in this project is the Google Analytics sample dataset on BigQuery:
 - ga_sessions: Detailed session-level data from August 1, 2017, including user interactions, traffic sources, geographic data, and ecommerce transactions.
-You can explore the dataset directly on [Google BigQuery's Public Datasets](https://console.cloud.google.com/bigquery?ws=!1m5!1m4!4m3!1sbigquery-public-data!2sgoogle_analytics_sample!3sga_sessions_20170801).
-## III. Data access
-## IV. Exploring dataset
+  You can explore the dataset directly on [Google BigQuery's Public Datasets](https://console.cloud.google.com/bigquery?ws=!1m5!1m4!4m3!1sbigquery-public-data!2sgoogle_analytics_sample!3sga_sessions_20170801).
+## III. Project Objectives
+- Analyze user demographics and acquisition channels.
+- Identify high-performing marketing channels and referral sources.
+- Understand user session behavior, including bounce rates and session duration.
+ -Evaluate ecommerce performance metrics like transactions, revenue, and conversion rates.
 ## Requirements
 - Access to Google BigQuery
 - Basic to intermediate SQL knowledge
