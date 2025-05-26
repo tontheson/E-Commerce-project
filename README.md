@@ -32,11 +32,13 @@ WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331'
 GROUP BY 1
 ORDER BY 1;</pre>
 - Result:
-<pre>| month   | visits | pageviews | transactions |
+<pre>
+| month   | visits | pageviews | transactions |
 |---------|--------|-----------|--------------|
 | 201701  | 64694  | 257708    | 713          |
 | 201702  | 62192  | 233373    | 733          |
-| 201703  | 69931  | 259522    | 993          |</pre>
+| 201703  | 69931  | 259522    | 993          |
+</pre>
 ### Query 02: Bounce rate per traffic source in July 2017 (Bounce_rate = num_bounce/total_visit) (order by total_visit DESC)
 - SQL query:
 <pre>SELECT
@@ -48,22 +50,24 @@ FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
 GROUP BY source
 ORDER BY total_visits DESC;</pre>
 - Result (Top 10):
-<pre>| source                   | total_visits | total_no_of_bou | bounce_rate   |
-|--------------------------|--------------|------------------|--------------|
-| google                   | 38400        | 19798            | 51,55729167  |
-| (direct)                 | 19891        | 8606             | 43,2657986   |
-| youtube.com              | 6351         | 4238             | 66,72964887  |
-| analytics.google.com     | 1972         | 1064             | 53,95537525  |
-| Partners                 | 1788         | 936              | 52,34899329  |
-| m.facebook.com           | 669          | 430              | 64,27503737  |
-| google.com               | 368          | 183              | 49,72826087  |
-| dfa                      | 302          | 124              | 41,05960265  |
-| sites.google.com         | 230          | 97               | 42,17391304  |
-| facebook.com             | 191          | 102              | 53,40314136  |
+<pre>
+| source                   | total_visits | total_no_of_bou   | bounce_rate  |
+|--------------------------|--------------|-------------------|--------------|
+| google                   | 38400        | 19798             | 51,55729167  |
+| (direct)                 | 19891        | 8606              | 43,2657986   |
+| youtube.com              | 6351         | 4238              | 66,72964887  |
+| analytics.google.com     | 1972         | 1064              | 53,95537525  |
+| Partners                 | 1788         | 936               | 52,34899329  |
+| m.facebook.com           | 669          | 430               | 64,27503737  |
+| google.com               | 368          | 183               | 49,72826087  |
+| dfa                      | 302          | 124               | 41,05960265  |
+| sites.google.com         | 230          | 97                | 42,17391304  |
+| facebook.com             | 191          | 102               | 53,40314136  |
 </pre>
 ### Query 03: Revenue by traffic source by week, by month in June 2017
 - SQL query:
-<pre>with 
+<pre>
+with 
 month_data as(
   SELECT
     "Month" as time_type,
